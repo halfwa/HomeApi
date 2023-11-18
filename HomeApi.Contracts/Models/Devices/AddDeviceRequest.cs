@@ -8,23 +8,11 @@ namespace HomeApi.Contracts.Devices
     public class AddDeviceRequest
     {
         public string Name { get; set; }
-
-        [Required]
         public string Manufacturer { get; set; }
-
-        [Required]
         public string Model { get; set; }
-
-        [Required]
         public string SerialNumber { get; set; }
-
-       //[Range(120, 220, ErrorMessage = "Поддердиваются устройства с напряжением от {1} до {2} вольт")]
         public int CurrentVolts { get; set; }
-
-        [Required]
         public bool GasUsage { get; set; }
-
-        [Required]
-        public string Location { get; set; }
+        public string RoomLocation { get; set; }
     }
 }
