@@ -1,4 +1,7 @@
+using FluentValidation.AspNetCore;
 using HomeApi.Confugurations;
+using HomeApi.Contracts.Validators;
+using HomeApi.MappingProfiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace HomeApi
@@ -29,15 +33,20 @@ namespace HomeApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddDeviceRequestValidator>());
+
             // Загружаем только адрес (вложенный Json-объект) 
             services.Configure<Address>(Configuration.GetSection("Address"));
 
             services.Configure<HomeOptions>(Configuration);
-
             services.Configure<HomeOptions>(opt =>
             {
                 opt.Area = 228;
             });
+
+            // Подключаем автомаппинг
+            var assembly = Assembly.GetAssembly(typeof(MappingProfile));
+            services.AddAutoMapper(assembly);
 
             services.AddControllers();
             // поддерживает автоматическую генерацию документации WebApi с использованием Swagger

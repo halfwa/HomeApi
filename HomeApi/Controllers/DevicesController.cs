@@ -6,6 +6,8 @@ using System;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Linq;
+using AutoMapper;
+using HomeApi.Contracts.Devices;
 
 namespace HomeApi.Controllers
 {
@@ -15,17 +17,47 @@ namespace HomeApi.Controllers
     {
         private readonly IOptions<HomeOptions> _options;
         private readonly IHostEnvironment _env;
-        public DevicesController(IOptions<HomeOptions> options, IHostEnvironment env)
+        private readonly IMapper _mapper;
+        public DevicesController(
+            IOptions<HomeOptions> options, 
+            IHostEnvironment env,
+            IMapper mapper)
         {
             _options = options;
             _env = env;
+            _mapper = mapper;
+        }
+
+
+        /// <summary>
+        /// Просмотр списка подключенных устройств
+        /// </summary>
+        [HttpGet]
+        [Route("")]
+        public IActionResult Get()
+        {
+            return StatusCode(200, "Устройства отсутствуют");
+        }
+
+
+        /// <summary>
+        /// Добавление нового устройства
+        /// </summary>
+        [HttpPost]
+        [Route("Add")]
+        public IActionResult Add(
+            [FromBody] // Атрибут, указывающий, откуда брать значение объекта
+            AddDeviceRequest request  // Объект запроса
+            )
+        {
+            return StatusCode(201, $"Устройство {request.Name} добавлено!");
         }
 
         /// <summary>
         /// Поиск и загрузка инструкции по использованию устройства 
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        /*[HttpGet]
         [HttpHead]
         [Route("{manufacturer}")]
         public IActionResult GetManual([FromRoute] string manufacturer)
@@ -45,6 +77,6 @@ namespace HomeApi.Controllers
             string fileName = $"{manufacturer}.pdf";
 
             return PhysicalFile(filePath, fileType, fileName);
-        }
+        }*/
     }
 }
