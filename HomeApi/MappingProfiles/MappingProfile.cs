@@ -5,6 +5,7 @@ using HomeApi.Contracts.Home;
 using HomeApi.Contracts.Models.Devices;
 using HomeApi.Contracts.Models.Room;
 using HomeApi.Data.Models;
+using HomeApi.Data.Queries;
 
 namespace HomeApi.MappingProfiles
 {
@@ -27,6 +28,7 @@ namespace HomeApi.MappingProfiles
             CreateMap<AddRoomRequest, Room>();
             CreateMap<Device, DeviceView>();
             CreateMap<Room, RoomView>();
+            CreateMap<EditeRoomRequest, UpdateRoomQuery>();
         }
     }
 }

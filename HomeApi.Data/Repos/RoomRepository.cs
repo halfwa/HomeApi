@@ -1,4 +1,5 @@
 ﻿using HomeApi.Data.Models;
+using HomeApi.Data.Queries;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,22 @@ namespace HomeApi.Data.Repos
         public async Task DeleteRoom(Room room)
         {
             _context.Rooms.Remove(room);
+            await _context.SaveChangesAsync();
+        }
+        
+        public async Task UpdateRoom(Room room, UpdateRoomQuery query)
+        {
+            if (!string.IsNullOrEmpty(query.Name))
+                room.Name = query.Name;
+            
+            room.Area = query.Area;
+            room.GasConnected = query.GasConnected;
+            room.Voltage = query.Voltage;
+
+            var entry = _context.Entry(room);
+            if (entry.State == EntityState.Detached)
+                 _context.Rooms.Update(room);
+
             await _context.SaveChangesAsync();
         }
     }

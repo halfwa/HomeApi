@@ -103,7 +103,7 @@ namespace HomeApi.Controllers
         }
 
         /// <summary>
-        /// Удаление существующего устройства
+        /// Удаляет существующие устройство
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

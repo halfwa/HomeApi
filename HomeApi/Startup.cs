@@ -41,7 +41,7 @@ namespace HomeApi
             // Подключаем автомаппер
             var assembly = Assembly.GetAssembly(typeof(MappingProfile));
             services.AddAutoMapper(assembly);
-
+                
             // Подключаем репозитории 
             services.AddSingleton<IDeviceRepository, DeviceRepository>();
             services.AddSingleton<IRoomRepository, RoomRepository>();

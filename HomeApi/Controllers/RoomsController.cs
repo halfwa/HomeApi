@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HomeApi.Contracts.Models.Room;
 using HomeApi.Data.Models;
+using HomeApi.Data.Queries;
 using HomeApi.Data.Repos;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,7 +33,6 @@ namespace HomeApi.Controllers
         public async Task<IActionResult> GetRooms()
         {
             var rooms = await _roomRepository.GetRooms();
-            if (rooms == null) { return StatusCode(200, "Мдааа"); }
 
             var response = new GetRoomsResponse()
             {
@@ -51,15 +51,32 @@ namespace HomeApi.Controllers
         public async Task<IActionResult> Add(
             [FromBody] AddRoomRequest request)
         {
-            var existingRoom = await _roomRepository.GetRoomByName(request.Name);
-            if (existingRoom == null)
+            var room = await _roomRepository.GetRoomByName(request.Name);
+            if (room != null)
             {
-                var newRoom = _mapper.Map<AddRoomRequest, Room>(request);
-                await _roomRepository.AddRoom(newRoom);
-                return StatusCode(201, $"Комната {request.Name} добавлена!");
+                return StatusCode(409, $"Ошибка: Комната {request.Name} уже существует.");
             }
+            var newRoom = _mapper.Map<AddRoomRequest, Room>(request);
+            await _roomRepository.AddRoom(newRoom);
 
-            return StatusCode(409, $"Ошибка: Комната {request.Name} уже существует.");
+            return StatusCode(201, $"Комната {request.Name} добавлена!");
+        }
+
+        [HttpPut]
+        [Route("{name}")]
+        public async Task<IActionResult> Edit(
+            [FromRoute] string name,
+            [FromBody] EditeRoomRequest request)
+        {
+            var room = await _roomRepository.GetRoomByName(name);
+            if (room == null)
+            {
+                return StatusCode(400, $"Ошибка: Комната \"{name}\" не существует.");
+            }
+            var query = _mapper.Map<EditeRoomRequest, UpdateRoomQuery>(request);
+            await _roomRepository.UpdateRoom(room, query);
+
+            return StatusCode(200, $"Комната {room.Name} уже не будет прежней!");
         }
 
         [HttpDelete]
@@ -74,7 +91,5 @@ namespace HomeApi.Controllers
 
             return StatusCode(200, $"Устройство {name} успешно удалено!");
         }
-
-
     }
 }
