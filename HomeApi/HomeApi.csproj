@@ -12,11 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Static\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HomeApi.Contracts\HomeApi.Contracts.csproj" />
+    <ProjectReference Include="..\HomeApi.Data\HomeApi.Data.csproj" />
   </ItemGroup>
 
 </Project>

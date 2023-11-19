@@ -1,11 +1,14 @@
 using FluentValidation.AspNetCore;
 using HomeApi.Confugurations;
 using HomeApi.Contracts.Validators;
+using HomeApi.Data;
+using HomeApi.Data.Repos;
 using HomeApi.MappingProfiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +29,8 @@ namespace HomeApi
         /// </summary>
         private IConfiguration Configuration
         { get; } = new ConfigurationBuilder()
+          .AddJsonFile("appsettings.json")
+          .AddJsonFile("appsettings.Development.json")
           .AddJsonFile("HomeOptions.json")
           .Build();
 
@@ -33,20 +38,28 @@ namespace HomeApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Подключаем автомаппер
+            var assembly = Assembly.GetAssembly(typeof(MappingProfile));
+            services.AddAutoMapper(assembly);
+
+            // Подключаем репозитории 
+            services.AddSingleton<IDeviceRepository, DeviceRepository>();
+            services.AddSingleton<IRoomRepository, RoomRepository>();
+
+            // Подключаем контекст Базы данных
+            var connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<HomeApiContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
+
+            // Подключаем валидацию запросов
             services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddDeviceRequestValidator>());
 
             // Загружаем только адрес (вложенный Json-объект) 
             services.Configure<Address>(Configuration.GetSection("Address"));
-
             services.Configure<HomeOptions>(Configuration);
             services.Configure<HomeOptions>(opt =>
             {
                 opt.Area = 228;
             });
-
-            // Подключаем автомаппинг
-            var assembly = Assembly.GetAssembly(typeof(MappingProfile));
-            services.AddAutoMapper(assembly);
 
             services.AddControllers();
             // поддерживает автоматическую генерацию документации WebApi с использованием Swagger

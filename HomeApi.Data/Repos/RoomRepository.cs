@@ -30,6 +30,15 @@ namespace HomeApi.Data.Repos
                 .FirstOrDefaultAsync();
         }
 
+
+        /// <summary>
+        ///  Найти все комнаты
+        /// </summary>
+        public async Task<Room[]> GetRooms()
+        {
+            return await _context.Rooms.ToArrayAsync();
+        }
+
         /// <summary>
         ///  Добавить новую комнату
         /// </summary>
@@ -41,5 +50,7 @@ namespace HomeApi.Data.Repos
 
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

@@ -9,7 +9,7 @@ namespace HomeApi.Contracts.Models.Room
     public class GetRoomsResponse
     {
         public int RoomAmount { get; set; }
-        public RoomView Rooms { get; set; }
+        public RoomView[] Rooms { get; set; }
     }
 
     public class RoomView
