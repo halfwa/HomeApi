@@ -3,6 +3,7 @@ using HomeApi.Contracts.Models.Room;
 using HomeApi.Data.Models;
 using HomeApi.Data.Repos;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -61,6 +62,19 @@ namespace HomeApi.Controllers
             return StatusCode(409, $"Ошибка: Комната {request.Name} уже существует.");
         }
 
-      
+        [HttpDelete]
+        [Route("{name}")]
+        public async Task<IActionResult> Delete([FromRoute] string name)
+        {
+            var room = await _roomRepository.GetRoomByName(name);
+            if (room == null)
+                return StatusCode(400, $"Ошибка: Комнаты \"{name}\" не существует.");
+
+            await _roomRepository.DeleteRoom(room);
+
+            return StatusCode(200, $"Устройство {name} успешно удалено!");
+        }
+
+
     }
 }

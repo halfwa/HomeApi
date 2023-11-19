@@ -18,7 +18,7 @@ namespace HomeApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class DevicesController: ControllerBase
+    public class DevicesController : ControllerBase
     {
         private IDeviceRepository _devices;
         private IRoomRepository _rooms;
@@ -102,7 +102,23 @@ namespace HomeApi.Controllers
             return StatusCode(200, $"Устройство обновлено! Имя - {device.Name}, Серийный номер - {device.SerialNumber},  Комната подключения - {device.Room.Name}");
         }
 
+        /// <summary>
+        /// Удаление существующего устройства
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var device = await _devices.GetDeviceById(id); 
+            if (device == null)
+                return StatusCode(400, $"Ошибка: Устройство с идентификатором {id} не существует.");
 
+            await _devices.DeleteDevice(device);
+
+            return StatusCode(200, $"Устройство {device.Name} успешно удалено!");
+        }
 
     }
 }

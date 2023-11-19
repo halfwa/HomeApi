@@ -51,6 +51,13 @@ namespace HomeApi.Data.Repos
             await _context.SaveChangesAsync();
         }
 
-
+        /// <summary>
+        /// Удалить существующую комнату
+        /// </summary>
+        public async Task DeleteRoom(Room room)
+        {
+            _context.Rooms.Remove(room);
+            await _context.SaveChangesAsync();
+        }
     }
 }
